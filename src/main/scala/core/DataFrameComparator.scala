@@ -1,9 +1,9 @@
 package core
 
-import org.apache.spark.sql.DataFrame
+import info.{DataFrameInfo, PrimaryKeysInfo}
 
-trait DataFrameComparator[T] {
+trait DataFrameComparator {
 
-  protected abstract def comparing(df1: (String, DataFrame), df2: (String, DataFrame)): T
+  def comparing(df1Info: DataFrameInfo, df2Info: DataFrameInfo, pkInfo: PrimaryKeysInfo): ComparingResult
 
 }

@@ -2,7 +2,7 @@ package core
 
 import org.apache.spark.sql.DataFrame
 
-abstract case class ComparingResult(resultDf: DataFrame)(implicit df1Name: String, df2Name: String) {
+case class ComparingResult(resultDf: DataFrame)(implicit df1Name: String, df2Name: String) {
 
   def getDataFrame = resultDf
 
