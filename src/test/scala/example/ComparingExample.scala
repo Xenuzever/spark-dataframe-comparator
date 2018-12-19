@@ -1,7 +1,7 @@
 package example
 
 import core.BasicComparingDataFrame
-import info.DataFrameInfo
+import info.DataFrameInformation
 import org.apache.spark.SparkConf
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 import org.apache.spark.sql.types._
@@ -51,10 +51,10 @@ object ComparingExample {
     val df2 = createInstantDataFrame(df2Cols, df2Data)
 
     // Create DataFrame Info.
-    val df1Info = DataFrameInfo.apply(df1Name, df1)
+    val df1Info = DataFrameInformation.apply(df1Name, df1)
       .appendPrimaryKey("NAME")
 
-    val df2Info = DataFrameInfo.apply(df2Name, df2)
+    val df2Info = DataFrameInformation.apply(df2Name, df2)
       .appendPrimaryKey("NAME")
 
     // Compare and get result.
