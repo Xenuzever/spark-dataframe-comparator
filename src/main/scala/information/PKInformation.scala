@@ -1,6 +1,5 @@
 package information
 
-import create.Creator
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.Column
 

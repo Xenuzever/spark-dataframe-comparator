@@ -1,5 +1,6 @@
 package comparing
 
+import computer.AggregateResult
 import org.apache.spark.sql.functions._
 import information.{DataFrameInformation, PKInformation}
 
@@ -73,6 +74,8 @@ object ComparingDataFrames extends Comparator[DataFrameInformation, DataFrameInf
           tmpDf
         })
         .select(selectColumns:_*)
+
+    AggregateResult.apply(joinedDf)
 
     // Apply.
     val resultDfName = df1Name + "_" + join + "_joined_" + df2Name
