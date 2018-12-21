@@ -1,8 +1,7 @@
 package example
 
-import core.BasicComparingDataFrame
+import comparator.ComparingDataFrames
 import info.DataFrameInformation
-import org.apache.spark.SparkConf
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 import org.apache.spark.sql.types._
 
@@ -25,23 +24,23 @@ object ComparingExample {
   def main(args: Array[String]): Unit = {
 
     // DF1's data.
-    val df1Cols = Array.apply("NAME", "AGE", "HEIGHT", "WEIGHT", "HOBBY")
+    val df1Cols = Array.apply("ID", "NAME", "AGE", "HEIGHT", "WEIGHT", "HOBBY")
     val df1Data = Array.apply(
-      Array.apply("John", "23", "173", "63", "GAME"),
-      Array.apply("Michel", "34", "168", "70", null),
-      Array.apply("Emma", "18", "153", "52", "Cooking"),
-      Array.apply("Mason", "45", "159", "56", "Soccer"),
-      Array.apply("Jacob", "28", "183", "72", "Basket ball")
+      Array.apply("1", "John", "23", "173", "63", "GAME"),
+      Array.apply("2", "Michel", "34", "168", "70", null),
+      Array.apply("3", "Emma", "18", "153", "52", "Cooking"),
+      Array.apply("4", "Mason", "45", "159", "56", "Soccer"),
+      Array.apply("5", "Jacob", "28", "183", null, "Basket ball")
     )
 
     // DF2's data.
-    val df2Cols = Array.apply("NAME", "AGE", "HEIGHT", "WEIGHT", "LIKES")
+    val df2Cols = Array.apply("ID", "NAME", "AGE", "HEIGHT", "WEIGHT", "LIKES")
     val df2Data = Array.apply(
-      Array.apply("Johnathan", "23", "173", "63", "GAME"),
-      Array.apply("Michael", "34", "168", "70", "Drinking"),
-      Array.apply("Emma", "18", "153", "52", "Programming"),
-      Array.apply("Mason", "45", "159", "56", "Soccer"),
-      Array.apply("Jacob", "63", "184", "72", "Guitar")
+      Array.apply("1", "John", "23", "173", "63", "GAME"),
+      Array.apply("2", "Michel", "34", "168", "70", "Drinking"),
+      Array.apply("3", "Emma", "18", "153", "52", "Programming"),
+      Array.apply("4", "Mason", "45", "159", "56", "Soccer"),
+      Array.apply("5", "Jacob", "63", "184", null, "Guitar")
     )
 
     // Define Info's arguments.
@@ -52,16 +51,19 @@ object ComparingExample {
 
     // Create DataFrame Info.
     val df1Info = DataFrameInformation.apply(df1Name, df1)
-      .appendPrimaryKey("NAME")
+      .appendPrimaryKey("ID")
+      .appendLitValue("NEW_HEIGHT", 160)
 
     val df2Info = DataFrameInformation.apply(df2Name, df2)
-      .appendPrimaryKey("NAME")
+      .appendPrimaryKey("ID")
+      .copyColumn("HEIGHT", "NEW_HEIGHT")
 
     // Compare and get result.
-    val result = BasicComparingDataFrame.comparing(df1Info, df2Info)
+    val result = ComparingDataFrames.comparing(df1Info, df2Info)
 
     // Show result.
-    result.resultDf.show()
+    result.df.show()
+    println(result.name)
 
   }
 
