@@ -1,6 +1,6 @@
-package creator
+package create
 
-import info.Information
+import information.Information
 
 trait Creator[U <: Information[_], R] {
 

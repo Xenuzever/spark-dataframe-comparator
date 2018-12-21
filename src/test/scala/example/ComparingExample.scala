@@ -1,7 +1,7 @@
 package example
 
-import comparator.ComparingDataFrames
-import info.DataFrameInformation
+import comparing.ComparingDataFrames
+import information.DataFrameInformation
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 import org.apache.spark.sql.types._
 

@@ -1,7 +1,7 @@
-package comparator
+package comparing
 
 import org.apache.spark.sql.functions._
-import info.{DataFrameInformation, PKInformation}
+import information.{DataFrameInformation, PKInformation}
 
 object ComparingDataFrames extends Comparator[DataFrameInformation, DataFrameInformation] {
 

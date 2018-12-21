@@ -1,4 +1,4 @@
-package comparator
+package comparing
 
 
 trait Comparator[T, R] {

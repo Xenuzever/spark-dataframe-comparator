@@ -1,4 +1,4 @@
-package info
+package information
 
 abstract class Information[T](t: T) {
 
