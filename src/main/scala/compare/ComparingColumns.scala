@@ -25,7 +25,7 @@ object ComparingColumns extends Comparator[Column, Column] {
   }
 
   def createComparingColumnName(colName1: String, colName2: String): String = {
-    COMPARING + colName1 + ":" + colName2
+    s"$COMPARING$colName1:$colName2"
   }
 
   protected def comparingLogic(col1: String, col2: String): String = {
