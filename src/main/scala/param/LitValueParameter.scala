@@ -1,3 +1,12 @@
+/*
+ *
+ *   Copyright 2018 Xena.
+ *
+ *   This software is released under the MIT License.
+ *   http://opensource.org/licenses/mit-license.php
+ *
+ */
+
 package param
 
 import org.apache.spark.sql.functions._
