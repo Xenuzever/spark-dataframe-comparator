@@ -1,7 +1,11 @@
 package result
 
-abstract class Result[T, R <: Result[T, R]] {
+abstract class Result[T, R <: ResultData] {
 
-  protected def analyze(t: T): R
+  def analyze(t: T): R
 
+}
+
+abstract class ResultData {
+  /** EMPTY */
 }

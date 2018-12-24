@@ -4,6 +4,7 @@ import compare.ComparingDataFrames
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 import org.apache.spark.sql.types._
 import param.{DataFrameParameter, PrimaryKeyParameter}
+import result.MatchingResult
 
 object Example {
 
@@ -29,7 +30,10 @@ object Example {
     val df2 = createTestData2
 
     // PK param
-    val primaryKeyParam = PrimaryKeyParameter.Builder.append("ID").append("NAME").build
+    val primaryKeyParam = PrimaryKeyParameter.Builder
+      .append("ID")
+      .append("NAME").build
+    //
 
     // Create DataFrame Info.
     val df1Param = DataFrameParameter.apply(df1Name, df1, primaryKeyParam)
@@ -37,11 +41,12 @@ object Example {
 
     // Compare and get result.
     val result = ComparingDataFrames.comparing(df1Param, df2Param)
-
+    MatchingResult.analyze(result)
     // Show result.
-    result.df.show()
+    //result.df.show()
+
     // Show result name.
-    println(result.name)
+    //println(result.name)
 
   }
 

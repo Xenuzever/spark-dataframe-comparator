@@ -1,27 +1,26 @@
 package compare
 
+import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.functions._
 import param.{DataFrameParameter, PrimaryKeyParameter}
+import result.{MatchingResult, Result}
 
-object ComparingDataFrames extends Comparator[DataFrameParameter, DataFrameParameter] {
+object ComparingDataFrames extends Comparator[DataFrameParameter, DataFrame] {
 
-  override def comparing(df1Param: DataFrameParameter, df2Param: DataFrameParameter): DataFrameParameter = {
+  override def comparing(df1Param: DataFrameParameter, df2Param: DataFrameParameter) = {
 
-    // Get DataFrame names.
     val df1Name = df1Param.name
     val df2Name = df2Param.name
 
-    // Get DataFrame.
     val df1 = df1Param.dataFrame
     val df2 = df2Param.dataFrame
 
-    // Get DataFrame columns.
+    val df1Cols = df1Param.columns
+    val df2Cols = df2Param.columns
+
     val df1ColMap = df1Param.columns.map(x => (x, s"$df1Name-$x")).toMap
     val df2ColMap = df2Param.columns.map(x => (x, s"$df2Name-$x")).toMap
-    val df1Cols = df1ColMap.keySet.toArray
-    val df2Cols = df2ColMap.keySet.toArray
 
-    // Create select columns for comparing DataFrame.
     val commonCols = df1Cols.filter(df2Cols.contains(_))
     val commonPK = commonCols.filter(_.contains(PrimaryKeyParameter.PK))
     val onlyDF1Cols = df1Cols.filterNot(commonCols.contains(_))
@@ -81,9 +80,9 @@ object ComparingDataFrames extends Comparator[DataFrameParameter, DataFrameParam
       })
       .select(selectColumns:_*)
 
-    // Apply.
     val resultDfName = s"${df1Name}_${join}_joined_${df2Name}"
-    DataFrameParameter.apply(resultDfName, joinedDF)
+
+    joinedDF
 
   }
 
