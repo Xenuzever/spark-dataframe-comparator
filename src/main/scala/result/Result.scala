@@ -11,14 +11,12 @@ package result
 
 import org.apache.spark.sql.DataFrame
 
-abstract class Result {
+abstract class Result(t: DataFrame) {
 
-  private var df: DataFrame = null
+  val dataFrame = t
 
-  def analyze(t: DataFrame): Unit = {
-    this.df = t
-  }
+  analyze
 
-  def getDF = df
+  protected def analyze: Result
 
 }

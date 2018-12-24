@@ -9,7 +9,7 @@
 
 package example
 
-import compare.ComparingDataFrames
+import compare.{ComparingDataFrames, JoiningDataFrames, MatchingDataFrames}
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 import org.apache.spark.sql.types._
 import param._
@@ -56,14 +56,14 @@ object Example {
     val df2Param = new DataFrameParameter(df2Name, df2, primaryKeyParam, prefixParameter = prefixParam)
 
     // Compare and get result.
-    val cdf = new ComparingDataFrames(new MatchingResult)
-    val result = cdf.comparing(df1Param, df2Param)
+    val mdf = new MatchingDataFrames()
+    val result = mdf.comparing(df1Param, df2Param)
 
     // Show result.
     val matchedRowCnt = result.getRowCnt
     val matchedItemCnt = result.getMatchedItemCnt
     val unMatchedItemCnt = result.getUnMatchedItemCnt
-    result.getDF.show
+    result.dataFrame.show
     println(s"MATCHED ROWS: $matchedRowCnt, MATCHED ITEMS: $matchedItemCnt, UNMATCHED ITEMS: $unMatchedItemCnt")
 
   }

@@ -9,13 +9,16 @@
 
 package compare
 
+import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.functions._
 import param.{DataFrameParameter, PrimaryKeyParameter}
 import result.Result
 
-class ComparingDataFrames[T <: Result](t: T) extends Comparator[DataFrameParameter, T] {
+abstract class ComparingDataFrames[T <: Result](join: String) extends Comparator[DataFrameParameter, T] {
 
-  override def comparing(df1Param: DataFrameParameter, df2Param: DataFrameParameter) = {
+  protected def createResult(df: DataFrame): T
+
+  override def comparing(df1Param: DataFrameParameter, df2Param: DataFrameParameter): T = {
 
     val df1Name = df1Param.paramName
     val df2Name = df2Param.paramName
@@ -75,7 +78,6 @@ class ComparingDataFrames[T <: Result](t: T) extends Comparator[DataFrameParamet
       .map(col)
 
     // DF1 join to DF2.
-    val join = JoiningDataFrames.INNER
     val joinedDF = JoiningDataFrames
       .apply(compareDF1, compareDF2)
       .joined(join, commonPK, df1ColMap, df2ColMap)
@@ -89,9 +91,7 @@ class ComparingDataFrames[T <: Result](t: T) extends Comparator[DataFrameParamet
       .select(selectColumns:_*)
 
     // Result
-    t.analyze(joinedDF)
-
-    t
+    createResult(joinedDF)
 
   }
 
