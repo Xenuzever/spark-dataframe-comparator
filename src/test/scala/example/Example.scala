@@ -63,6 +63,7 @@ object Example {
     val matchedRowCnt = result.getRowCnt
     val matchedItemCnt = result.getMatchedItemCnt
     val unMatchedItemCnt = result.getUnMatchedItemCnt
+
     result.dataFrame.show
     println(s"MATCHED ROWS: $matchedRowCnt, MATCHED ITEMS: $matchedItemCnt, UNMATCHED ITEMS: $unMatchedItemCnt")
 
