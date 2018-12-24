@@ -47,8 +47,8 @@ object Example {
     val df2Param = new DataFrameParameter(df2Name, df2, primaryKeyParam, prefixParameter = prefixParam)
 
     // Compare and get result.
-    val comparing = new ComparingDataFrames(new MatchingResult)
-    val result = comparing.comparing(df1Param, df2Param)
+    val cdf = new ComparingDataFrames(new MatchingResult)
+    val result = cdf.comparing(df1Param, df2Param)
 
     // Show result.
     val matchedRowCnt = result.getRowCnt
