@@ -3,7 +3,7 @@ package example
 import compare.ComparingDataFrames
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 import org.apache.spark.sql.types._
-import param.{DataFrameParameter, PrimaryKeyParameter}
+import param._
 import result.MatchingResult
 
 object Example {
@@ -30,14 +30,21 @@ object Example {
     val df2 = createTestData2
 
     // PK param
-    val primaryKeyParam = PrimaryKeyParameter.Builder
+    val primaryKeyParam = new PrimaryKeyParameterBuilder()
       .append("ID")
       .append("NAME").build
-    //
+
+    // LIT param
+    val litParam = new LitValueParameterBuilder()
+      .append("AGE", "30").build
+
+    // PREFIX param
+    val prefixParam = new ColumnPrefixParameterBuilder()
+      .append("AGE", "[LIT]").build
 
     // Create DataFrame Info.
-    val df1Param = DataFrameParameter.apply(df1Name, df1, primaryKeyParam)
-    val df2Param = DataFrameParameter.apply(df2Name, df2, primaryKeyParam)
+    val df1Param = new DataFrameParameter(df1Name, df1, primaryKeyParam, litParam, prefixParameter = prefixParam)
+    val df2Param = new DataFrameParameter(df2Name, df2, primaryKeyParam, prefixParameter = prefixParam)
 
     // Compare and get result.
     val comparing = new ComparingDataFrames(new MatchingResult)
@@ -47,8 +54,8 @@ object Example {
     val matchedRowCnt = result.getRowCnt
     val matchedItemCnt = result.getMatchedItemCnt
     val unMatchedItemCnt = result.getUnMatchedItemCnt
-
-    println(s"MATCHED ROW COUNT: $matchedRowCnt, MATCHED ITEM COUNT: $matchedItemCnt, UNMATCHED ITEM COUNT: $unMatchedItemCnt")
+    result.getDF.show
+    println(s"MATCHED ROWS: $matchedRowCnt, MATCHED ITEMS: $matchedItemCnt, UNMATCHED ITEMS: $unMatchedItemCnt")
 
   }
 

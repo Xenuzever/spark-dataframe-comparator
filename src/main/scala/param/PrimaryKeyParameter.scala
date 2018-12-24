@@ -14,8 +14,10 @@ object PrimaryKeyParameter {
 
   final val PK = "[PK]"
 
-  object Builder extends ParameterBuilder[String, PrimaryKeyParameter] {
-    override def build: PrimaryKeyParameter = PrimaryKeyParameter.apply(buffer.toArray)
-  }
+}
+
+class PrimaryKeyParameterBuilder extends ParameterBuilder[String, PrimaryKeyParameter] {
+
+  override def build: PrimaryKeyParameter = PrimaryKeyParameter.apply(buffer.toArray)
 
 }

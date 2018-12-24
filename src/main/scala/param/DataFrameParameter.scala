@@ -2,24 +2,23 @@ package param
 
 import java.util.regex.Pattern
 
-import editor.DataFrameEditor
 import org.apache.spark.sql.DataFrame
-import org.apache.spark.sql.functions.{col, lit}
 
-case class DataFrameParameter(name: String,
-                              df: DataFrame,
-                              primaryKeyParameter: PrimaryKeyParameter = PrimaryKeyParameter.Builder.build,
-                              litValueParameter: LitValueParameter = LitValueParameter.Builder.build,
-                              renameParameter: RenameParameter = RenameParameter.Builder.build,
-                              prefixParameter: ColumnPrefixParameter = ColumnPrefixParameter.Builder.build,
-                              suffixParameter: ColumnSuffixParameter = ColumnSuffixParameter.Builder.build)
-  extends Parameter[DataFrame, DataFrame] with DataFrameEditor[Map[String, String]] {
+class DataFrameParameter(name: String,
+                         df: DataFrame,
+                         primaryKeyParameter: PrimaryKeyParameter = new PrimaryKeyParameterBuilder().build,
+                         litValueParameter: LitValueParameter = new LitValueParameterBuilder().build,
+                         renameParameter: RenameParameter = new RenameParameterBuilder().build,
+                         prefixParameter: ColumnPrefixParameter = new ColumnPrefixParameterBuilder().build,
+                         suffixParameter: ColumnSuffixParameter = new ColumnSuffixParameterBuilder()build
+                        )
+  extends Parameter[DataFrame, DataFrame] {
 
-  lazy val dataFrame = convert(df)
+  val paramName = name
 
-  lazy val columns = dataFrame.columns
+  val columns = dataFrame.columns
 
-  lazy val primaryKeys = {
+  val primaryKeys = {
     val regex = s"^($PrimaryKeyParameter.PK)(.+)" + "$"
     columns
       .map(Pattern.compile(regex).matcher(_))
@@ -27,13 +26,14 @@ case class DataFrameParameter(name: String,
       .map(_.group(2))
   }
 
-  lazy val attributes = columns.filterNot(primaryKeys.contains(_))
+  val attributes = columns.filterNot(primaryKeys.contains(_))
+
+  lazy val dataFrame = convert(df)
 
   lazy val columnMap: Map[String, String] = {
     df.columns
       .map(col => (col, col))
       .map(x => (renameParameter.convert(x._1), x._2))
-      .map(x => (litValueParameter.convert(x), x._2))
       .map(x => (primaryKeyParameter.convert(x), x._2))
       .map(x => (prefixParameter.convert(x), x._2))
       .map(x => (suffixParameter.convert(x), x._2))
@@ -41,18 +41,13 @@ case class DataFrameParameter(name: String,
   }
 
   override def convert(t: DataFrame): DataFrame = {
-    logic(t, columnMap)
-  }
-
-  override protected def logic(df: DataFrame, t: Map[String, String]): DataFrame = {
-    val renamed = df.transform(x => {
+    litValueParameter.convert(df).transform(x => {
       var tmpDf = x
-      t.foreach(f => {
-        tmpDf = tmpDf.withColumn(f._1, col(f._2))
+      columnMap.foreach(f => {
+        tmpDf = tmpDf.withColumnRenamed(f._2, f._1)
       })
       tmpDf
     })
-    litValueParameter.edit(renamed, t).select(t.keys.toArray.map(col):_*)
   }
 
 }

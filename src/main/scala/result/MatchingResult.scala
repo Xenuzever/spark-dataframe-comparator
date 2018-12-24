@@ -13,6 +13,7 @@ class MatchingResult extends Result {
   private var unMatchedItemCnt: Long = 0
 
   override def analyze(df: DataFrame) = {
+    super.analyze(df)
     val selectExpr = df.columns.filter(_.startsWith(ComparingColumns.COMPARING)).map(col(_))
     val comparingDF = df.select(selectExpr:_*)
     this.rowCnt = df.count()

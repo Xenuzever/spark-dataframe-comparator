@@ -8,8 +8,8 @@ class ComparingDataFrames[T <: Result](t: T) extends Comparator[DataFrameParamet
 
   override def comparing(df1Param: DataFrameParameter, df2Param: DataFrameParameter) = {
 
-    val df1Name = df1Param.name
-    val df2Name = df2Param.name
+    val df1Name = df1Param.paramName
+    val df2Name = df2Param.paramName
 
     val df1 = df1Param.dataFrame
     val df2 = df2Param.dataFrame

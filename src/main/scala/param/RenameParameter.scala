@@ -10,10 +10,8 @@ case class RenameParameter(renameMap: Map[String, String]) extends Parameter[Str
 
 }
 
-object RenameParameter {
+class RenameParameterBuilder extends ParameterBuilder[(String, String), RenameParameter] {
 
-  object Builder extends ParameterBuilder[(String, String), RenameParameter] {
-    override def build: RenameParameter = RenameParameter.apply(buffer.toMap)
-  }
+  override def build: RenameParameter = RenameParameter.apply(buffer.toMap)
 
 }
