@@ -19,7 +19,7 @@ class DataFrameParameter(name: String,
                          litValueParameter: LitValueParameter = new LitValueParameterBuilder().build,
                          renameParameter: RenameParameter = new RenameParameterBuilder().build,
                          prefixParameter: ColumnPrefixParameter = new ColumnPrefixParameterBuilder().build,
-                         suffixParameter: ColumnSuffixParameter = new ColumnSuffixParameterBuilder()build)
+                         suffixParameter: ColumnSuffixParameter = new ColumnSuffixParameterBuilder().build)
   extends Parameter[DataFrame, DataFrame] {
 
   val paramName = name
