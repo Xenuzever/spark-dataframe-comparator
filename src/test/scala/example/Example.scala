@@ -41,15 +41,18 @@ object Example {
     // PK param
     val primaryKeyParam = new PrimaryKeyParameterBuilder()
       .append("ID")
-      .append("NAME").build
+      .append("NAME")
+      .build
 
     // LIT param
     val litParam = new LitValueParameterBuilder()
-      .append("AGE", "30").build
+      .append("AGE", "30")
+      .build
 
     // PREFIX param
     val prefixParam = new ColumnPrefixParameterBuilder()
-      .append("AGE", "[LIT]").build
+      .append("AGE", "[LIT]")
+      .build
 
     // Create DataFrame Info.
     val df1Param = new DataFrameParameter(df1Name, df1, primaryKeyParam, litParam, prefixParameter = prefixParam)
