@@ -24,6 +24,8 @@ class DataFrameParameter(name: String,
 
   val paramName = name
 
+  val dataFrame = convert(df)
+
   val columns = dataFrame.columns
 
   val primaryKeys = {
@@ -36,19 +38,18 @@ class DataFrameParameter(name: String,
 
   val attributes = columns.filterNot(primaryKeys.contains(_))
 
-  lazy val dataFrame = convert(df)
-
-  lazy val columnMap: Map[String, String] = {
-    df.columns
-      .map(col => (col, col))
-      .map(x => (renameParameter.convert(x._1), x._2))
-      .map(x => (primaryKeyParameter.convert(x), x._2))
-      .map(x => (prefixParameter.convert(x), x._2))
-      .map(x => (suffixParameter.convert(x), x._2))
-      .toMap[String, String]
-  }
-
   override def convert(t: DataFrame): DataFrame = {
+
+    val columnMap: Map[String, String] = {
+      df.columns
+        .map(col => (col, col))
+        .map(x => (renameParameter.convert(x._1), x._2))
+        .map(x => (primaryKeyParameter.convert(x), x._2))
+        .map(x => (prefixParameter.convert(x), x._2))
+        .map(x => (suffixParameter.convert(x), x._2))
+        .toMap[String, String]
+    }
+
     litValueParameter.convert(df).transform(x => {
       var tmpDf = x
       columnMap.foreach(f => {
@@ -56,6 +57,7 @@ class DataFrameParameter(name: String,
       })
       tmpDf
     })
+
   }
 
 }
