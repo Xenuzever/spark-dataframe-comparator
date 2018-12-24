@@ -1,11 +1,10 @@
 package compare
 
-import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.functions._
 import param.{DataFrameParameter, PrimaryKeyParameter}
-import result.{MatchingResult, Result}
+import result.Result
 
-object ComparingDataFrames extends Comparator[DataFrameParameter, DataFrame] {
+class ComparingDataFrames[T <: Result](t: T) extends Comparator[DataFrameParameter, T] {
 
   override def comparing(df1Param: DataFrameParameter, df2Param: DataFrameParameter) = {
 
@@ -80,9 +79,10 @@ object ComparingDataFrames extends Comparator[DataFrameParameter, DataFrame] {
       })
       .select(selectColumns:_*)
 
-    val resultDfName = s"${df1Name}_${join}_joined_${df2Name}"
+    // Result
+    t.analyze(joinedDF)
 
-    joinedDF
+    t
 
   }
 

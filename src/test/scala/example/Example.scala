@@ -40,13 +40,15 @@ object Example {
     val df2Param = DataFrameParameter.apply(df2Name, df2, primaryKeyParam)
 
     // Compare and get result.
-    val result = ComparingDataFrames.comparing(df1Param, df2Param)
-    MatchingResult.analyze(result)
-    // Show result.
-    //result.df.show()
+    val comparing = new ComparingDataFrames(new MatchingResult)
+    val result = comparing.comparing(df1Param, df2Param)
 
-    // Show result name.
-    //println(result.name)
+    // Show result.
+    val matchedRowCnt = result.getRowCnt
+    val matchedItemCnt = result.getMatchedItemCnt
+    val unMatchedItemCnt = result.getUnMatchedItemCnt
+
+    println(s"MATCHED ROW COUNT: $matchedRowCnt, MATCHED ITEM COUNT: $matchedItemCnt, UNMATCHED ITEM COUNT: $unMatchedItemCnt")
 
   }
 

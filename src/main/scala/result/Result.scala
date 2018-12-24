@@ -1,11 +1,9 @@
 package result
 
-abstract class Result[T, R <: ResultData] {
+import org.apache.spark.sql.DataFrame
 
-  def analyze(t: T): R
+abstract class Result {
 
-}
+  def analyze(t: DataFrame): Unit
 
-abstract class ResultData {
-  /** EMPTY */
 }
