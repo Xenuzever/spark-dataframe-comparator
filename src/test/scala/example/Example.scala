@@ -1,9 +1,8 @@
 package example
 
-import comparing.ComparingDataFrames
-import information.DataFrameInformation
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 import org.apache.spark.sql.types._
+import param.{DataFrameParameter, PrimaryKeyParameter}
 
 import scala.reflect.io.Path
 
@@ -31,23 +30,22 @@ object Example {
     val df2Name = "DF2"
     val df2 = createTestData2
 
+    // PK param
+    val primaryKeyParam = PrimaryKeyParameter.Builder.append("ID").append("NAME").build
+
     // Create DataFrame Info.
-    val df1Info = DataFrameInformation.apply(df1Name, df1)
-      .appendPrimaryKey("ID")
-      .columnRename("HEIGHT", "NEW_HEIGHT")
-      .appendLitValue("NEW_HEIGHT", 160)
+    val df1Param = DataFrameParameter.apply(df1Name, df1, primaryKeyParam)
+    val df2Param = DataFrameParameter.apply(df2Name, df2, primaryKeyParam)
 
-    val df2Info = DataFrameInformation.apply(df2Name, df2)
-      .appendPrimaryKey("ID")
-      .columnRename("HEIGHT", "NEW_HEIGHT")
+    df2Param.dataFrame.show()
 
-    // Compare and get result.
-    val result = ComparingDataFrames.comparing(df1Info, df2Info)
-
-    // Show result.
-    result.df.show()
-    // Show result name.
-    println(result.name)
+//    // Compare and get result.
+//    val result = ComparingDataFrames.comparing(df1Info, df2Info)
+//
+//    // Show result.
+//    result.df.show()
+//    // Show result name.
+//    println(result.name)
 
   }
 
