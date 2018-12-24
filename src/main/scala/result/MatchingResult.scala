@@ -13,7 +13,7 @@ import compare.ComparingColumns
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.DataFrame
 
-case class MatchingResult(df: DataFrame) extends Result(df) {
+case class MatchingResult(df: DataFrame) extends Result[MatchingResult](df) {
 
   private var rowCnt: Long = 0
 

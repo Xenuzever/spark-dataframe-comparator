@@ -14,7 +14,7 @@ import org.apache.spark.sql.functions._
 import param.{DataFrameParameter, PrimaryKeyParameter}
 import result.Result
 
-abstract class ComparingDataFrames[T <: Result](join: String) extends Comparator[DataFrameParameter, T] {
+abstract class ComparingDataFrames[T <: Result[T]](join: String) extends Comparator[DataFrameParameter, T] {
 
   protected def createResult(df: DataFrame): T
 
