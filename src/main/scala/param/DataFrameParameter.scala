@@ -27,6 +27,8 @@ case class DataFrameParameter(name: String,
       .map(_.group(2))
   }
 
+  lazy val attributes = columns.filterNot(primaryKeys.contains(_))
+
   lazy val columnMap: Map[String, String] = {
     df.columns
       .map(col => (col, col))

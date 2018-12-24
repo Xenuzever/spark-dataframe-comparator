@@ -1,70 +1,77 @@
 package compare
 
 import org.apache.spark.sql.functions._
-import param.DataFrameParameter
+import param.{DataFrameParameter, PrimaryKeyParameter}
 
 object ComparingDataFrames extends Comparator[DataFrameParameter, DataFrameParameter] {
 
-  final val INNER_JOIN = "inner"
-
-  final val LEFT_OUTER_JOIN = "left_outer"
-
-  final val RIGHT_OUTER_JOIN = "right_outer"
-
-  final val CROSS_JOIN = "cross"
-
-  final val FULL_OUTER_JOIN = "full_outer"
-
-  override def comparing(df1Info: DataFrameParameter, df2Info: DataFrameParameter): DataFrameParameter = {
-    comparing(df1Info, df2Info, INNER_JOIN)
-  }
-
-  def comparing(df1Info: DataFrameParameter, df2Info: DataFrameParameter, join: String)
-  : DataFrameParameter = {
+  override def comparing(df1Param: DataFrameParameter, df2Param: DataFrameParameter): DataFrameParameter = {
 
     // Get DataFrame names.
-    val df1Name = df1Info.name
-    val df2Name = df2Info.name
+    val df1Name = df1Param.name
+    val df2Name = df2Param.name
 
     // Get DataFrame.
-    val df1 = df1Info.dataFrame
-    val df2 = df2Info.dataFrame
+    val df1 = df1Param.dataFrame
+    val df2 = df2Param.dataFrame
 
     // Get DataFrame columns.
-    val df1ColMap = df1Info.columnMap
-    val df2ColMap = df2Info.columnMap
-    val df1Cols = df1.columns
-    val df2Cols = df2.columns
+    val df1ColMap = df1Param.columns.map(x => (x, s"$df1Name-$x")).toMap
+    val df2ColMap = df2Param.columns.map(x => (x, s"$df2Name-$x")).toMap
+    val df1Cols = df1ColMap.keySet.toArray
+    val df2Cols = df2ColMap.keySet.toArray
 
     // Create select columns for comparing DataFrame.
-    val commonCols = df1ColMap.filter(x => df2ColMap.contains(x._1)).map(x => (x._2, df2ColMap.get(x._1).get))
-    val commonDf1Cols = commonCols.map(_._1).toArray
-    val commonDf2Cols = commonCols.map(_._2).toArray
-    val onlyDf1Cols = df1Cols.filterNot(commonDf1Cols.contains(_))
-    val onlyDf2Cols = df2Cols.filterNot(commonDf2Cols.contains(_))
+    val commonCols = df1Cols.filter(df2Cols.contains(_))
+    val commonPK = commonCols.filter(_.contains(PrimaryKeyParameter.PK))
+    val onlyDF1Cols = df1Cols.filterNot(commonCols.contains(_))
+    val onlyDF2Cols = df2Cols.filterNot(commonCols.contains(_))
 
-    // Create comparing DataFrames.
-    val compareDf1 = df1.select(Array.concat(commonDf1Cols, onlyDf1Cols).map(df1.col):_*)
-    val compareDf2 = df2.select(Array.concat(commonDf2Cols, onlyDf2Cols).map(df2.col):_*)
+    val compareDF1 = df1.select(Array.concat(commonCols, onlyDF1Cols).map(df1.col):_*).transform(x => {
+      var tmpDF = x
+      df1Cols.foreach(c => {
+        val newName = df1ColMap.get(c).get
+        tmpDF = tmpDF
+          .withColumnRenamed(c, newName)
+      })
+      tmpDF
+    })
 
-    // Create select column for result DataFrame.
-    val zippedPKCols = commonCols.filter(_._1.contains(DataFrameParameter.PK))
-    val zippedNotPKCols = commonCols.filterNot(_._1.contains(DataFrameParameter.PK))
-      .map(x => (x._1, x._2, ComparingColumns.createComparingColumnName(x._1, x._2)))
+    val compareDF2 = df2.select(Array.concat(commonCols, onlyDF2Cols).map(df2.col):_*).transform(x => {
+      var tmpDF = x
+      df2Cols.foreach(c => {
+        val newName = df2ColMap.get(c).get
+        tmpDF = tmpDF
+          .withColumnRenamed(c, newName)
+      })
+      tmpDF
+    })
+
+    val zippedPKCols = commonPK
+      .map(x => (df1ColMap.get(x).get, df2ColMap.get(x).get))
+
+    val zippedNotPKCols = commonCols.filterNot(commonPK.contains(_))
+      .map(x => {
+        val newName1 = df1ColMap.get(x).get
+        val newName2 = df2ColMap.get(x).get
+        (newName1, newName2, ComparingColumns.createComparingColumnName(newName1, newName2))
+      })
+
     val selectColumns = Seq(
       Seq(zippedPKCols.map(x => Array.apply(x._1, x._2)).flatten).flatten,
       Seq(zippedNotPKCols.map(x => Array.apply(x._1, x._2, x._3)).flatten).flatten,
-      Seq(onlyDf1Cols.toSeq).flatten,
-      Seq(onlyDf2Cols.toSeq).flatten
+      Seq(onlyDF1Cols.map(df1ColMap.get(_).get).toSeq).flatten,
+      Seq(onlyDF2Cols.map(df2ColMap.get(_).get).toSeq).flatten
     )
       .flatten
       .map(x => x.toString)
       .map(col)
 
     // DF1 join to DF2.
-    val pkInfo = ComparingPKParameter.apply(df1Info, df2Info)
-    val joinCondition = pkInfo.create
-    val joinedDf = compareDf1.join(compareDf2, joinCondition, join)
+    val join = JoiningDataFrames.INNER
+    val joinedDF = JoiningDataFrames
+      .apply(compareDF1, compareDF2)
+      .joined(join, commonPK, df1ColMap, df2ColMap)
       .transform(x => {
         var tmpDf = x
         zippedNotPKCols.foreach(x => {
@@ -74,11 +81,9 @@ object ComparingDataFrames extends Comparator[DataFrameParameter, DataFrameParam
       })
       .select(selectColumns:_*)
 
-    // AggregateResult.apply(joinedDf)
-
     // Apply.
-    val resultDfName = df1Name + "_" + join + "_joined_" + df2Name
-    DataFrameParameter.apply(resultDfName, joinedDf)
+    val resultDfName = s"${df1Name}_${join}_joined_${df2Name}"
+    DataFrameParameter.apply(resultDfName, joinedDF)
 
   }
 

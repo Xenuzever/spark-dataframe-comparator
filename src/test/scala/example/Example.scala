@@ -1,11 +1,9 @@
 package example
 
+import compare.ComparingDataFrames
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 import org.apache.spark.sql.types._
 import param.{DataFrameParameter, PrimaryKeyParameter}
-
-import scala.reflect.io.Path
-
 
 object Example {
 
@@ -37,15 +35,13 @@ object Example {
     val df1Param = DataFrameParameter.apply(df1Name, df1, primaryKeyParam)
     val df2Param = DataFrameParameter.apply(df2Name, df2, primaryKeyParam)
 
-    df2Param.dataFrame.show()
+    // Compare and get result.
+    val result = ComparingDataFrames.comparing(df1Param, df2Param)
 
-//    // Compare and get result.
-//    val result = ComparingDataFrames.comparing(df1Info, df2Info)
-//
-//    // Show result.
-//    result.df.show()
-//    // Show result name.
-//    println(result.name)
+    // Show result.
+    result.df.show()
+    // Show result name.
+    println(result.name)
 
   }
 
