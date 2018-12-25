@@ -25,7 +25,7 @@ case class MatchingResult(df: DataFrame) extends Result[MatchingResult](df) {
     val selectExpr = df.columns.filter(_.startsWith(ComparingColumns.COMPARING)).map(col(_))
     val comparingDF = df.select(selectExpr:_*)
     this.rowCnt = df.count()
-    this.matchedItemCnt = comparingDF.collect().map(f => f.toSeq.count(_.equals("○"))).sum
+    this.matchedItemCnt = comparingDF.rdd.map(f => f.toSeq.count(_.equals("○"))).sum.toLong
     this.unMatchedItemCnt = (rowCnt * comparingDF.columns.length) - matchedItemCnt
     this
   }
