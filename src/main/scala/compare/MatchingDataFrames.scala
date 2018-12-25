@@ -15,7 +15,7 @@ import result.MatchingResult
 final class MatchingDataFrames extends ComparingDataFrames[MatchingResult](JoiningDataFrames.INNER) {
 
   override protected def createResult(df: DataFrame): MatchingResult = {
-    MatchingResult.apply(df).analyzed
+    MatchingResult.apply(df)
   }
 
 }

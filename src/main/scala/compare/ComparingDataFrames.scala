@@ -91,7 +91,7 @@ abstract class ComparingDataFrames[T <: Result[T]](join: String) extends Compara
       .select(selectColumns:_*)
 
     // Result
-    createResult(joinedDF)
+    createResult(joinedDF).analyzed
 
   }
 
