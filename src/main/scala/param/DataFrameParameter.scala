@@ -15,11 +15,11 @@ import org.apache.spark.sql.DataFrame
 
 class DataFrameParameter(name: String,
                          df: DataFrame,
-                         primaryKeyParameter: PrimaryKeyParameter = new PrimaryKeyParameterBuilder().build,
-                         litValueParameter: LitValueParameter = new LitValueParameterBuilder().build,
-                         renameParameter: RenameParameter = new RenameParameterBuilder().build,
-                         prefixParameter: ColumnPrefixParameter = new ColumnPrefixParameterBuilder().build,
-                         suffixParameter: ColumnSuffixParameter = new ColumnSuffixParameterBuilder().build)
+                         primaryKeyParameters: PrimaryKeyParameter = new PrimaryKeyParameterBuilder().build,
+                         litValueParameters: LitValueParameter = new LitValueParameterBuilder().build,
+                         renameParameters: RenameParameter = new RenameParameterBuilder().build,
+                         prefixParameters: ColumnPrefixParameter = new ColumnPrefixParameterBuilder().build,
+                         suffixParameters: ColumnSuffixParameter = new ColumnSuffixParameterBuilder().build)
   extends Parameter[DataFrame, DataFrame] {
 
   val paramName = name
