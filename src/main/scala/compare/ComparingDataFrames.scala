@@ -12,9 +12,9 @@ package compare
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.functions._
 import param.{DataFrameParameter, PrimaryKeyParameter}
-import result.Result
+import result.{AnalyzedData, Result}
 
-abstract class ComparingDataFrames[T <: Result[T]](join: String) extends Comparator[DataFrameParameter, T] {
+abstract class ComparingDataFrames[A <: AnalyzedData, T <: Result[A, T]](join: String) extends Comparator[DataFrameParameter, T] {
 
   protected def createResult(df: DataFrame): T
 
@@ -91,7 +91,7 @@ abstract class ComparingDataFrames[T <: Result[T]](join: String) extends Compara
       .select(selectColumns:_*)
 
     // Result
-    createResult(joinedDF).analyzed
+    createResult(joinedDF)
 
   }
 

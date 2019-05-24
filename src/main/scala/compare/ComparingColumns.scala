@@ -29,8 +29,7 @@ object ComparingColumns extends Comparator[Column, Column] {
   }
 
   protected def comparingLogic(col1: String, col2: String): String = {
-    if (col1 == col2) "○"
-    else "×"
+    if (col1 == col2) "○" else "×"
   }
 
 }

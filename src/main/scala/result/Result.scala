@@ -11,12 +11,14 @@ package result
 
 import org.apache.spark.sql.DataFrame
 
-abstract class Result[T <: Result[T]](t: DataFrame) {
+abstract class Result[A <: AnalyzedData, T <: Result[A, T]](t: DataFrame) {
 
   val dataFrame = t
 
-  final lazy val analyzed = analyze
+  final lazy val analyzed: A = analyze
 
-  protected def analyze: T
+  protected def analyze: A
 
 }
+
+abstract class AnalyzedData

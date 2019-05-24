@@ -13,27 +13,18 @@ import compare.ComparingColumns
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.DataFrame
 
-case class MatchingResult(df: DataFrame) extends Result[MatchingResult](df) {
+case class MatchingResult(df: DataFrame) extends Result[AnalyzedDataOfMatchingResult, MatchingResult](df) {
 
-  private var rowCnt: Long = 0
+  override protected def analyze = AnalyzedDataOfMatchingResult.apply(df)
 
-  private var matchedItemCnt: Long = 0
+}
 
-  private var unMatchedItemCnt: Long = 0
+case class AnalyzedDataOfMatchingResult(df: DataFrame) extends AnalyzedData {
 
-  override protected def analyze = {
-    val selectExpr = df.columns.filter(_.startsWith(ComparingColumns.COMPARING)).map(col(_))
-    val comparingDF = df.select(selectExpr:_*)
-    this.rowCnt = df.count()
-    this.matchedItemCnt = comparingDF.rdd.map(f => f.toSeq.count(_.equals("○"))).sum.toLong
-    this.unMatchedItemCnt = (rowCnt * comparingDF.columns.length) - matchedItemCnt
-    this
-  }
-
-  def getRowCnt = rowCnt
-
-  def getMatchedItemCnt = matchedItemCnt
-
-  def getUnMatchedItemCnt = unMatchedItemCnt
+  private val selectExpr = df.columns.filter(_.startsWith(ComparingColumns.COMPARING)).map(col(_))
+  private val comparingDF = df.select(selectExpr:_*)
+  val rowCnt = df.count()
+  val matchedItemCnt = comparingDF.rdd.map(f => f.toSeq.count(_.equals("○"))).sum.toLong
+  val unMatchedItemCnt = (rowCnt * comparingDF.columns.length) - matchedItemCnt
 
 }

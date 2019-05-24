@@ -63,12 +63,13 @@ object Example {
     val result = mdf.comparing(df1Param, df2Param)
 
     // Show result.
-    val matchedRowCnt = result.getRowCnt
-    val matchedItemCnt = result.getMatchedItemCnt
-    val unMatchedItemCnt = result.getUnMatchedItemCnt
-
-    result.dataFrame.show
-    println(s"MATCHED ROWS: $matchedRowCnt, MATCHED ITEMS: $matchedItemCnt, UNMATCHED ITEMS: $unMatchedItemCnt")
+    val resultDf = result.dataFrame
+    resultDf.show()
+//    val analyzed = result.analyzed
+//    val matchedRowCnt = analyzed.rowCnt
+//    val matchedItemCnt = analyzed.matchedItemCnt
+//    val unMatchedItemCnt = analyzed.unMatchedItemCnt
+//    println(s"MATCHED ROWS: $matchedRowCnt, MATCHED ITEMS: $matchedItemCnt, UNMATCHED ITEMS: $unMatchedItemCnt")
 
   }
 
@@ -90,7 +91,7 @@ object Example {
       Array.apply("1", "John", "23", "173", "63", "GAME"),
       Array.apply("2", "Michel", "34", "168", "70", "Drinking"),
       Array.apply("3", "Emma", "18", "153", "52", "Programming"),
-      Array.apply("4", "Mason", "45", "159", "56", "Soccer"),
+      Array.apply("4", "Masons", "45", "159", "56", "Soccer"),
       Array.apply("5", "Jacob", "63", "184", null, "Guitar")
     )
     createInstantDataFrame(df2Cols, df2Data)

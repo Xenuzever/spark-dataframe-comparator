@@ -10,9 +10,9 @@
 package compare
 
 import org.apache.spark.sql.DataFrame
-import result.MatchingResult
+import result.{AnalyzedDataOfMatchingResult, MatchingResult}
 
-final class MatchingDataFrames extends ComparingDataFrames[MatchingResult](JoiningDataFrames.INNER) {
+final class MatchingDataFrames extends ComparingDataFrames[AnalyzedDataOfMatchingResult, MatchingResult](JoiningDataFrames.INNER) {
 
   override protected def createResult(df: DataFrame): MatchingResult = {
     MatchingResult.apply(df)
